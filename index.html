@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="styles.css">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<body onload="StartUp();">
+
+<h2>Random Civ Generator</h2>
+<t1>Written by Bernhard Strasser ([o.p.]kanalratte). Version 0.1. Feel free to use or reuse this html & javascript code.</t1><br>
+<t1>This program randomly selects AoE2 civs for you without double-picks and guaranteeing that there are always flank and pocket civs.</t1><br>
+<t1>Usage: 1) Choose map. 2) Choose number of civs you want to be randomly chosen. 3) Select PartySize between 1-4 (PartySize of 3 will have 2/3 flank and 1/3 pocket civs, same flank & pocket civs otherwise).</t1><br>
+<t1>       4) Left-click on tiers to choose civs from or not (green=tier is allowd, red=tier is not allowed). 5) Click on "Start Calculation..." 6) Read your random civs & use them!</t1><br>
+<br>
+<br>
+<br>
+
+<label>Civs for mapstyle
+<select>
+	<option id="MapChoice1_OpenLM" value="Open Landmap" selected>Open Landmap</option>
+<!--NOT YET IMPLEMENTED:	<option id="MapChoice2_BF" label="Black Forest" value="Black Forest">Black Forest</option>
+	<option id="MapChoice3_Arena" label="Arena" value="Arena">Arena</option>
+-->
+</select>
+</label>
+
+<label for="NoOfCivsText">Number of Civs to Dice:</label>
+<tab id=t1><input type="number" value="4" id="NoOfCivs" name="NoOfCivs" required
+       minlength="1" maxlength="4" size="4">   
+<label for="PartySize">PartySize (1-4):</label>
+<tab id=t1><input type="number" value="4" id="PartySize" name="PartySize" required
+       minlength="1" maxlength="4" size="4">
+<br>
+<br>
+<label for="ChooseTiers">Allow civs only from the following Tiers:</label>
+<button type="button" onclick="LeftClickOnTierX('A')" id="TierA">Tier A</button>
+<button type="button" onclick="LeftClickOnTierX('B')" id="TierB">Tier B</button>
+<button type="button" onclick="LeftClickOnTierX('C')" id="TierC">Tier C</button>
+<br>
+<br>
+<button type="button" onclick="CalcAndShowResults()">Start Calculation...</button>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+  
+<h1>TODAYS CIVS   A A A R E . . .</h1>
+<p id="Output1"></p>
+<br>
+<br>
+<br>
+
+  
+
+<br>
+
+
+<script>
+
+
+
+// var FilterOptions = {MaxRatingMetric:[], WantedPlayers:[], UnwantedPlayers:[], UnwantedMaps:[]};
+var Civs = ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"];
+
+
+//var OpenLMFlankCivs = 	{	STier: ["Britons", "Vikings", "Koreans", "Mayans", "Ethiopians", "Portuguese", "Vietnamese", "Dravidians"],
+//							ATier: ["Byzantines", "Chinese", "Japanese", "Saracens", "Incas", "Italians", "Magyars", "Malay", "Bohemians"],
+//							BTier: ["Aztecs", "Khmer", "Poles", "Bengalis"]};
+
+var OpenLMFlankCivs = 	[["Britons", "Vikings", "Koreans", "Mayans", "Ethiopians", "Portuguese", "Vietnamese", "Dravidians"],
+						 ["Byzantines", "Chinese", "Japanese", "Saracens", "Incas", "Italians", "Magyars", "Malay", "Bohemians"],
+						 ["Aztecs", "Khmer", "Poles", "Bengalis"]];
+
+
+
+//var OpenLMPocketCivs =	{	STier: ["Franks", "Huns", "Hindustanis", "Magyars", "Khmer", "Cumans", "Lithuanians", "Burgundians", "Poles"],
+//							ATier: ["Persians", "Teutons", "Spanish", "Sicilians", "Gurjaras"],
+//							BTier: ["Byzantines", "Chinese", "Goths", "Turks", "Italians", "Slavs", "Berbers", "Malians", "Portuguese", "Burmese", "Vietnamese", "Bulgarians", "Tatars"]};
+
+var OpenLMPocketCivs =	[["Franks", "Huns", "Hindustanis", "Magyars", "Khmer", "Cumans", "Lithuanians", "Burgundians", "Poles"],
+						 ["Persians", "Teutons", "Spanish", "Sicilians", "Gurjaras"],
+						 ["Byzantines", "Chinese", "Goths", "Turks", "Italians", "Slavs", "Berbers", "Malians", "Portuguese", "Burmese", "Vietnamese", "Bulgarians", "Tatars"]];
+
+
+
+//var OpenLMPocketCivs = {	STier: ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"],
+//						ATier: ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"],
+//						BTier: ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"]};
+
+
+
+var FilterOptions = {WantedTiers: [], WantedCivs: []};
+var TierOrder = ["A","B","C"];
+
+
+
+
+function LeftClickOnTierX(TierName){ 
+	
+	CurButton = document.getElementById("Tier"+TierName);
+	if(CurButton != null){
+		
+		// If left-clicking on green player --> set color back to normal, and remove player from Wanted-Players list
+		if( CurButton.style.backgroundColor == "rgb(0, 255, 0)"){
+			CurButton.style.backgroundColor = "rgb(255, 0, 0)";
+			Indie = FilterOptions.WantedTiers.indexOf(TierName);
+			FilterOptions.WantedTiers.splice(Indie,1);			
+		}
+		// If color was red before: Remove player from unwanted players. If color was red or none before: Change color to green and add player to Wanted player
+		else{
+			//if(CurButton.style.backgroundColor == "rgb(255, 0, 0)"){
+			//	Indie = FilterOptions.UnwantedPlayers.indexOf(TierName);
+			//	FilterOptions.UnwantedPlayers.splice(Indie,1);	
+			//}
+			FilterOptions.WantedTiers.push(TierName);
+			CurButton.style.backgroundColor = 'rgb(0, 255, 0)';
+		}
+	}
+		
+}
+
+function StartUp(){ 
+	LeftClickOnTierX("A");
+	LeftClickOnTierX("B");
+	LeftClickOnTierX("C");
+}
+
+function CalcAndShowResults() {
+
+
+	// Definitions
+	
+	
+	// Variables from HTML
+	var PartySize = parseInt(document.getElementById("PartySize").value);
+	var NoOfTotalCivs = parseInt(document.getElementById("NoOfCivs").value);
+	var MapType = 1;	// Need to check how to retrieve that from select items
+	
+	
+	// Define current Civ-Sets
+	if(MapType == 1){
+		CurFlankCivs = [];
+		for (let kk = 0; kk<OpenLMFlankCivs.length; kk++){
+			CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
+			if(CurIndie > -1){
+				CurFlankCivs = CurFlankCivs.concat(OpenLMFlankCivs[kk]);
+			}
+		}
+
+		CurPocketCivs = [];
+		for (let kk = 0; kk<OpenLMPocketCivs.length; kk++){
+			CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
+			if(CurIndie > -1){
+				CurPocketCivs = CurPocketCivs.concat(OpenLMPocketCivs[kk]);
+			}
+		}		
+	}
+	
+	// Calc How many Flanks and Pockets we have
+	var PocketToTotalPlayers = 0.5;
+	if(PartySize == 3){
+		PocketToTotalPlayers = 1/3;
+	}
+	var NoOfPocketCivs = Math.floor(NoOfTotalCivs*PocketToTotalPlayers);
+	var NoOfFlankCivs = Math.floor(NoOfTotalCivs*(1-PocketToTotalPlayers));
+	
+	// If we are missing a civ, throw dice if put it to flank or pocket
+	if(NoOfPocketCivs + NoOfFlankCivs != NoOfTotalCivs){
+		var dummy = getRandomInt(1);
+		NoOfPocketCivs = NoOfPocketCivs + (dummy==1);
+		NoOfFlankCivs = NoOfFlankCivs + (dummy==0);		
+	}	
+
+
+
+	// Draw flank civs
+	var DrawnFlankCivs = [];
+	// DrawnFlankCivs = DrawCivs(CurFlankCivs,CurPocketCivs,NoOfFlankCivs);		// How to remove civs from CurFlankCivs and CurPocketCivs?
+	var Tmp_DrawnCat;
+	var Tmp_DrawnCiv;
+	while (DrawnFlankCivs.length < NoOfFlankCivs){
+		
+		// Draw Civ
+		Tmp_DrawnCivNo = getRandomInt(CurFlankCivs.length-1);
+		Tmp_DrawnCiv = CurFlankCivs[Tmp_DrawnCivNo];
+		
+		// Add Civ to Drawn Flank Civs
+		DrawnFlankCivs.push(CurFlankCivs[Tmp_DrawnCivNo]);
+		
+		// Remove Drawn Civs From Flank And Pocket Pools
+		CurFlankCivs = RemoveElementFromArray(CurFlankCivs,Tmp_DrawnCiv);
+		CurPocketCivs = RemoveElementFromArray(CurPocketCivs,Tmp_DrawnCiv);
+
+
+	}
+
+
+	// Draw Pocket civs
+	var DrawnPocketCivs = [];
+	while (DrawnPocketCivs.length < NoOfPocketCivs){
+		
+		// Draw Civ
+		Tmp_DrawnCivNo = getRandomInt(CurPocketCivs.length-1);
+		Tmp_DrawnCiv = CurPocketCivs[Tmp_DrawnCivNo];
+		
+		// Add Civ to Drawn Pocket Civs
+		DrawnPocketCivs.push(CurPocketCivs[Tmp_DrawnCivNo]);
+		
+		// Remove Drawn Civs From Pocket And Pocket Pools
+		CurFlankCivs = RemoveElementFromArray(CurFlankCivs,Tmp_DrawnCiv);
+		CurPocketCivs = RemoveElementFromArray(CurPocketCivs,Tmp_DrawnCiv);
+
+	}
+
+	
+	// Show Results
+	HTMLOutput = document.getElementById("Output1");
+	
+	// Remove content of tables
+	HTMLOutput.innerHTML = "";
+	
+	for (let kk = 0; kk<DrawnFlankCivs.length; kk++){
+		HTMLOutput.innerHTML = HTMLOutput.innerHTML + DrawnFlankCivs[kk] + ",";
+	}
+	for (let kk = 0; kk<DrawnPocketCivs.length; kk++){
+		if(kk == DrawnPocketCivs.length-1){
+			HTMLOutput.innerHTML = HTMLOutput.innerHTML + DrawnPocketCivs[kk];
+		}
+		else {
+			HTMLOutput.innerHTML = HTMLOutput.innerHTML + DrawnPocketCivs[kk] + ",";		
+		}
+	}	
+	
+}
+
+
+
+
+
+
+// Function to 
+function DrawCivs(DrawFromArray, RemoveDrawAlsoFromThisArray, NumberOfDraws) {
+	
+
+	var DrawnCivs = [];
+	while (DrawnCivs.length < NumberOfDraws){
+		
+		// Draw Civ
+		Tmp_DrawnCivNo = getRandomInt(DrawFromArray.length-1);
+		Tmp_DrawnCiv = DrawFromArray[Tmp_DrawnCivNo];
+		
+		// Add Civ to Drawn Pocket Civs
+		DrawnCivs.push(DrawFromArray[Tmp_DrawnCivNo]);
+		
+		// Remove Drawn Civs From Pocket And Pocket Pools
+		RemoveDrawAlsoFromThisArray = RemoveElementFromArray(RemoveDrawAlsoFromThisArray,Tmp_DrawnCiv);
+		DrawFromArray = RemoveElementFromArray(DrawFromArray,Tmp_DrawnCiv);
+
+	}
+	return DrawnCivs;
+}
+
+
+// Function to remove element from array
+function RemoveElementFromArray(InputArray, RemoveElement) {
+	
+	var IndexToRemove = InputArray.indexOf(RemoveElement);
+	if(IndexToRemove == -1){
+		Output = InputArray;
+		return Output;
+	}
+	
+	Output = [];
+	Output = Output.concat(InputArray.slice(0,IndexToRemove),InputArray.slice(IndexToRemove+1)) 
+	
+	return Output;
+}
+
+
+//// Function to take a subarray (slicing) based on index-array. In Matlab notation A(B), where A is an array, and B is an array of indices.
+//// Currently only works along one dimension
+//function sliceByIndexArray(InputArray, IndexArray) {
+//	Output = [];
+//	for (let kk=0; kk<IndexArray.length; kk++ ){
+//	  Output.push(InputArray[IndexArray[kk]]);
+//	}
+//	return Output;
+//}
+//
+//
+//
+//
+//
+//function get2DArray(size) {
+//    size = size > 0 ? size : 0;
+//    var arr = [];
+//
+//    while(size--) {
+//        arr.push([]);
+//    }
+//
+//    return arr;
+//}
+
+
+function getRandomInt(max) {
+  return Math.round(Math.random() * max);
+}
+
+
+
+
+
+</script>
+
+
+</body>
+</html>
