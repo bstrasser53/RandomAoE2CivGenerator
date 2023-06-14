@@ -15,10 +15,11 @@
 <br>
 
 <label>Civs for mapstyle
-<select>
+<select id="ChosenMap">
 	<option id="MapChoice1_OpenLM" value="Open Landmap" selected>Open Landmap</option>
-<!--NOT YET IMPLEMENTED:	<option id="MapChoice2_BF" label="Black Forest" value="Black Forest">Black Forest</option>
 	<option id="MapChoice3_Arena" label="Arena" value="Arena">Arena</option>
+<!--NOT YET IMPLEMENTED:	<option id="MapChoice2_BF" label="Black Forest" value="Black Forest">Black Forest</option>
+
 -->
 </select>
 </label>
@@ -63,31 +64,21 @@
 // var FilterOptions = {MaxRatingMetric:[], WantedPlayers:[], UnwantedPlayers:[], UnwantedMaps:[]};
 var Civs = ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"];
 
-
-//var OpenLMFlankCivs = 	{	STier: ["Britons", "Vikings", "Koreans", "Mayans", "Ethiopians", "Portuguese", "Vietnamese", "Dravidians"],
-//							ATier: ["Byzantines", "Chinese", "Japanese", "Saracens", "Incas", "Italians", "Magyars", "Malay", "Bohemians"],
-//							BTier: ["Aztecs", "Khmer", "Poles", "Bengalis"]};
-
 var OpenLMFlankCivs = 	[["Britons", "Vikings", "Koreans", "Mayans", "Ethiopians", "Portuguese", "Vietnamese", "Dravidians"],
 						 ["Byzantines", "Chinese", "Japanese", "Saracens", "Incas", "Italians", "Magyars", "Malay", "Bohemians"],
 						 ["Aztecs", "Khmer", "Poles", "Bengalis"]];
-
-
-
-//var OpenLMPocketCivs =	{	STier: ["Franks", "Huns", "Hindustanis", "Magyars", "Khmer", "Cumans", "Lithuanians", "Burgundians", "Poles"],
-//							ATier: ["Persians", "Teutons", "Spanish", "Sicilians", "Gurjaras"],
-//							BTier: ["Byzantines", "Chinese", "Goths", "Turks", "Italians", "Slavs", "Berbers", "Malians", "Portuguese", "Burmese", "Vietnamese", "Bulgarians", "Tatars"]};
 
 var OpenLMPocketCivs =	[["Franks", "Huns", "Hindustanis", "Magyars", "Khmer", "Cumans", "Lithuanians", "Burgundians", "Poles"],
 						 ["Persians", "Teutons", "Spanish", "Sicilians", "Gurjaras"],
 						 ["Byzantines", "Chinese", "Goths", "Turks", "Italians", "Slavs", "Berbers", "Malians", "Portuguese", "Burmese", "Vietnamese", "Bulgarians", "Tatars"]];
 
+var ArenaFlankCivs = 	[["Aztecs", "Britons", "Byzantines", "Celts", "Turks", "Koreans", "Spanish", "Italians","Portuguese","Bengalis"],
+						 ["Chinese", "Saracens", "Teutons", "Mayans", "Malay", "Vietnamese", "Bohemians", "Incas", "Poles"],
+						 ["Franks", "Japanese", "Mongols", "Huns", "Hindustanis", "Slavs", "Berbers", "Ethiopians", "Burmese", "Khmer", "Bulgarians", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Dravidians", "Gurjaras"]];
 
-
-//var OpenLMPocketCivs = {	STier: ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"],
-//						ATier: ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"],
-//						BTier: ["Aztecs", "Britons", "Byzantines", "Celts", "Chinese", "Franks", "Goths", "Japanese", "Mongols", "Persians", "Saracens", "Teutons", "Turks", "Vikings", "Huns", "Koreans", "Mayans", "Spanish", "Incas", "Hindustanis", "Italians", "Magyars", "Slavs", "Berbers", "Ethiopians", "Malians", "Portuguese", "Burmese", "Khmer", "Malay", "Vietnamese", "Bulgarians", "Cumans", "Lithuanians", "Tatars", "Burgundians", "Sicilians", "Bohemians", "Poles", "Bengalis", "Dravidians", "Gurjaras"]};
-
+var ArenaPocketCivs =	[["Teutons", "Hindustanis", "Slavs", "Burmese", "Cumans", "Burgundians", "Bohemians", "Poles", "Gurjaras", "Dravidians", "Ethiopians"],
+						 ["Britons", "Goths", "Franks", "Celts", "Japanese", "Mongols", "Koreans", "Spanish", "Incas", "Berbers", "Portuguese", "Khmer", "Malay", "Lithuanians", "Bengalis"],
+						 ["Byzantines", "Chinese", "Saracens", "Huns", "Mayans", "Vietnamese", "Bulgarians"]];
 
 
 var FilterOptions = {WantedTiers: [], WantedCivs: []};
@@ -124,7 +115,36 @@ function StartUp(){
 	LeftClickOnTierX("A");
 	LeftClickOnTierX("B");
 	LeftClickOnTierX("C");
+	
+	OpenLMFlankCivs = AddRemainingTier(OpenLMFlankCivs,Civs);
+	OpenLMPocketCivs = AddRemainingTier(OpenLMPocketCivs,Civs);
+	ArenaFlankCivs = AddRemainingTier(ArenaFlankCivs,Civs);
+	ArenaPocketCivs = AddRemainingTier(ArenaPocketCivs,Civs);
+	
 }
+
+function AddRemainingTier(TierSet,AllCivs){ 
+
+	var CurTotCivs = 0;
+	for (let kk = 0; kk<TierSet.length; kk++){
+		CurTotCivs = CurTotCivs + TierSet[kk].length;
+	}		
+
+	// If some civs are not in current TierSet, add them to last Tier.
+	if(CurTotCivs < Civs.length){
+		var diff = AllCivs;
+		for (let kk = 0; kk<TierSet.length; kk++){
+			
+			diff = diff.filter(function(x) {
+				return TierSet[kk].indexOf(x) < 0;
+			});
+
+		}
+		TierSet.push(diff);
+	}
+	return TierSet;
+}
+
 
 function CalcAndShowResults() {
 
@@ -138,21 +158,35 @@ function CalcAndShowResults() {
 	var MapType = 1;	// Need to check how to retrieve that from select items
 	
 	
+		
+	var ChosenMap = document.getElementById("ChosenMap").value;
+		
+	if(ChosenMap == "Open Landmap")
+	{
+		FlankCivs = OpenLMFlankCivs;
+		PocketCivs = OpenLMPocketCivs;
+	}
+	else if(ChosenMap == "Arena")
+	{
+		FlankCivs = ArenaFlankCivs;
+		PocketCivs = ArenaPocketCivs;
+	}
+		
 	// Define current Civ-Sets
 	if(MapType == 1){
 		CurFlankCivs = [];
-		for (let kk = 0; kk<OpenLMFlankCivs.length; kk++){
+		for (let kk = 0; kk<FlankCivs.length; kk++){
 			CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
 			if(CurIndie > -1){
-				CurFlankCivs = CurFlankCivs.concat(OpenLMFlankCivs[kk]);
+				CurFlankCivs = CurFlankCivs.concat(FlankCivs[kk]);
 			}
 		}
 
 		CurPocketCivs = [];
-		for (let kk = 0; kk<OpenLMPocketCivs.length; kk++){
+		for (let kk = 0; kk<PocketCivs.length; kk++){
 			CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
 			if(CurIndie > -1){
-				CurPocketCivs = CurPocketCivs.concat(OpenLMPocketCivs[kk]);
+				CurPocketCivs = CurPocketCivs.concat(PocketCivs[kk]);
 			}
 		}		
 	}
