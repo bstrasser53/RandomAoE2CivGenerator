@@ -16,7 +16,7 @@
 
 <label>Civs for mapstyle
 <select id="ChosenMap">
-	<option id="MapChoice1_OpenLM" value="Open Landmap" selected>Open Landmap</option>
+	<option id="MapChoice1_OpenLM" label="Open Landmap" value="OpenLM" selected>Open Landmap</option>
 	<option id="MapChoice3_Arena" label="Arena" value="Arena">Arena</option>
 	<option id="MapChoice3_BF" label="Black Forest" value="BF">Black Forest</option>
 <!--NOT YET IMPLEMENTED:	<option id="MapChoice2_BF" label="Black Forest" value="Black Forest">Black Forest</option>
@@ -167,13 +167,12 @@ function CalcAndShowResults() {
 	// Variables from HTML
 	var PartySize = parseInt(document.getElementById("PartySize").value);
 	var NoOfTotalCivs = parseInt(document.getElementById("NoOfCivs").value);
-	var MapType = 1;	// Need to check how to retrieve that from select items
 	
 	
 		
 	var ChosenMap = document.getElementById("ChosenMap").value;
 		
-	if(ChosenMap == "Open Landmap")
+	if(ChosenMap == "OpenLM")
 	{
 		FlankCivs = OpenLMFlankCivs;
 		PocketCivs = OpenLMPocketCivs;
@@ -190,23 +189,21 @@ function CalcAndShowResults() {
 	}
 			
 	// Define current Civ-Sets
-	if(MapType == 1){
-		CurFlankCivs = [];
-		for (let kk = 0; kk<FlankCivs.length; kk++){
-			CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
-			if(CurIndie > -1){
-				CurFlankCivs = CurFlankCivs.concat(FlankCivs[kk]);
-			}
+	CurFlankCivs = [];
+	for (let kk = 0; kk<FlankCivs.length; kk++){
+		CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
+		if(CurIndie > -1){
+			CurFlankCivs = CurFlankCivs.concat(FlankCivs[kk]);
 		}
-
-		CurPocketCivs = [];
-		for (let kk = 0; kk<PocketCivs.length; kk++){
-			CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
-			if(CurIndie > -1){
-				CurPocketCivs = CurPocketCivs.concat(PocketCivs[kk]);
-			}
-		}		
 	}
+
+	CurPocketCivs = [];
+	for (let kk = 0; kk<PocketCivs.length; kk++){
+		CurIndie = FilterOptions.WantedTiers.indexOf(TierOrder[kk]);
+		if(CurIndie > -1){
+			CurPocketCivs = CurPocketCivs.concat(PocketCivs[kk]);
+		}
+	}		
 	
 	// Calc How many Flanks and Pockets we have
 	var PocketToTotalPlayers = 0.5;
