@@ -18,6 +18,7 @@
 <select id="ChosenMap">
 	<option id="MapChoice1_OpenLM" value="Open Landmap" selected>Open Landmap</option>
 	<option id="MapChoice3_Arena" label="Arena" value="Arena">Arena</option>
+	<option id="MapChoice3_BF" label="Black Forest" value="BF">Black Forest</option>
 <!--NOT YET IMPLEMENTED:	<option id="MapChoice2_BF" label="Black Forest" value="Black Forest">Black Forest</option>
 
 -->
@@ -81,6 +82,15 @@ var ArenaPocketCivs =	[["Teutons", "Hindustanis", "Slavs", "Burmese", "Cumans", 
 						 ["Byzantines", "Chinese", "Saracens", "Huns", "Mayans", "Vietnamese", "Bulgarians"]];
 
 
+var BFFlankCivs = 		[["Britons", "Lithuanians", "Turks", "Mongols","Portuguese"],
+						 ["Aztecs", "Bengalis", "Burmese", "Byzantines", "Celts", "Dravidians", "Ethiopians", "Hindustanis", "Italians", "Japanese", "Koreans", "Malay", "Saracens", "Slavs", "Spanish", "Teutons", "Vietnamese"],
+						 ["Berbers", "Bohemians", "Bulgarians", "Burgundians", "Cumans", "Franks", "Goths", "Huns", "Incas", "Khmer", "Magyars", "Persians", "Poles", "Sicilians"]];
+
+var BFPocketCivs =		[["Bohemians", "Celts", "Cumans", "Ethiopians", "Koreans", "Mongols", "Portuguese", "Slavs", "Spanish", "Teutons", "Turks"],
+						 ["Britons", "Bulgarians", "Byzantines", "Dravidians", "Franks", "Huns", "Italians", "Japanese", "Magyars", "Malay", "Persians", "Saracens", "Vietnamese"],
+						 ["Aztecs", "Bengalis", "Berbers", "Burgundians", "Burmese", "Goths", "Hindustanis", "Incas", "Khmer", "Lithuanians", "Poles", "Sicilians"]];
+
+
 var FilterOptions = {WantedTiers: [], WantedCivs: []};
 var TierOrder = ["A","B","C"];
 
@@ -120,6 +130,8 @@ function StartUp(){
 	OpenLMPocketCivs = AddRemainingTier(OpenLMPocketCivs,Civs);
 	ArenaFlankCivs = AddRemainingTier(ArenaFlankCivs,Civs);
 	ArenaPocketCivs = AddRemainingTier(ArenaPocketCivs,Civs);
+	BFFlankCivs = AddRemainingTier(BFFlankCivs,Civs);
+	BFPocketCivs = AddRemainingTier(BFPocketCivs,Civs);
 	
 }
 
@@ -171,7 +183,12 @@ function CalcAndShowResults() {
 		FlankCivs = ArenaFlankCivs;
 		PocketCivs = ArenaPocketCivs;
 	}
-		
+	else if(ChosenMap == "BF")
+	{
+		FlankCivs = BFFlankCivs;
+		PocketCivs = BFPocketCivs;
+	}
+			
 	// Define current Civ-Sets
 	if(MapType == 1){
 		CurFlankCivs = [];
